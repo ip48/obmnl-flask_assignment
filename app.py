@@ -37,6 +37,22 @@ def add_transaction():
     return redirect.for_url('get_transactions')   
 
 # Update operation
+@app.route("/edit/<int:transaction_id>", methods=["GET", "POST"])
+def edit_transaction(transaction_id):
+    if request.method=="GET":
+        for transaction in transactions:
+            if(transaction.id == transaction_id):
+                return render_template("edit.html", transaction)
+    if request.method=="POST":
+        for transaction in transactions:
+            if(transaction.id == transaction_id):
+                transaction.data = request.form.data;
+                transaction.date = request.form.date;
+                return redirect(for_url('get_transactions'))
+
+    return {"message": "Transaction not found", 404}
+
+
 
 # Delete operation
 
