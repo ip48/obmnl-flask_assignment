@@ -1,8 +1,7 @@
 # Import libraries
-from Flask import flask, render_template, 
-    request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 
-app = flask("Inna App")
+app = Flask("Inna App")
 
 # Sample data
 transactions = [
@@ -18,7 +17,7 @@ transactions = [
 # Read operation
 @app.route("/")
 def get_transactions():
-    render_template("transactions.html", transactions=transactions)
+    return render_template("transactions.html", transactions=transactions)
 
 
 # Create operation
@@ -29,12 +28,12 @@ def add_transaction():
 
     
     transation = {
-            'id': len(transactions)+1
-            'date': request.form['date']
+            'id': len(transactions)+1,
+            'date': request.form['date'],
             'amount': float(request.form['amount'])
             }
-    transactions.append(transaction)
-    return redirect.for_url('get_transactions')   
+    transactions.append(transation)
+    return redirect(url_for('get_transactions'))   
 
 # Update operation
 @app.route("/edit/<int:transaction_id>", methods=["GET", "POST"])
@@ -42,25 +41,27 @@ def edit_transaction(transaction_id):
     if request.method=="GET":
         for transaction in transactions:
             if(transaction["id"] == transaction_id):
-                return render_template("edit.html", transaction)
+                return render_template("edit.html", transaction=transaction)
     if request.method=="POST":
         for transaction in transactions:
             if(transaction["id"] == transaction_id):
-                transaction["date"] = request.form.date
-                transaction["amount"] = request.form.amount
-                return redirect(for_url('get_transactions'))
+                transaction["date"] = request.form["date"]
+                transaction["amount"] = request.form["amount"]
+                return redirect(url_for('get_transactions'))
 
-    return {"message": "Transaction not found", 404}
+    return {"message": "Transaction not found"}, 404
 
 
 # Delete operation
-@app.route("/delete/<int:transaction_id>", methods=["DELETE"])
+@app.route("/delete/<int:transaction_id>")
 def delete_transaction(transaction_id):
+    print(f"Inna: {transaction_id}")
     for transaction in transactions:
-            if(transaction["id"] == transaction_id):
-                transactions.remove(transaction)
-                return redirect(for_url("get_transactions"))
-    return {"message": "Transaction not found", 404}
+        print(f'Inna Check: {transaction["id"]}')
+        if transaction["id"] == transaction_id :
+            transactions.remove(transaction)
+            return redirect(url_for("get_transactions"))
+    return {"message": "Transaction not found"}, 404
 
 
 # Run the Flask app
