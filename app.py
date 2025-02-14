@@ -77,7 +77,10 @@ def filter_transaction():
     filtered_transactions = [t for t in transactions if min_amount <= t["amount"] <= max_amount]
     return render_template("transactions.html", transactions=filtered_transactions)
 
-
+@app.route("/balance")
+def total_balance():
+    balance = sum(t["amount"] for t in transactions)
+    return f"Total Balance: {balance}"
 
 
 # Run the Flask app
