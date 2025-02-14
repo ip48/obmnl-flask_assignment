@@ -63,6 +63,22 @@ def delete_transaction(transaction_id):
             return redirect(url_for("get_transactions"))
     return {"message": "Transaction not found"}, 404
 
+@app.route("/search")
+def search_transaction():
+    return render_template("search.html")
+
+@app.route("/search", methods=["POST"])
+def filter_transaction():
+    min_amount = float(request.form["min_amount"])
+    max_amount = float(request.form["max_amount"])
+    
+    if not (min_amount and max_amount):
+        return {"message": "Missing required fields min_amount or max_amount"}, 400
+    filtered_transactions = [t for t in transactions if min_amount <= t["amount"] <= max_amount]
+    return render_template("transactions.html", transactions=filtered_transactions)
+
+
+
 
 # Run the Flask app
 if __name__ == "__main__":
