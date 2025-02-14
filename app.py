@@ -41,20 +41,29 @@ def add_transaction():
 def edit_transaction(transaction_id):
     if request.method=="GET":
         for transaction in transactions:
-            if(transaction.id == transaction_id):
+            if(transaction["id"] == transaction_id):
                 return render_template("edit.html", transaction)
     if request.method=="POST":
         for transaction in transactions:
-            if(transaction.id == transaction_id):
-                transaction.data = request.form.data;
-                transaction.date = request.form.date;
+            if(transaction["id"] == transaction_id):
+                transaction["date"] = request.form.date
+                transaction["amount"] = request.form.amount
                 return redirect(for_url('get_transactions'))
 
     return {"message": "Transaction not found", 404}
 
 
-
 # Delete operation
+@app.route("/delete/<int:transaction_id>", methods=["DELETE"])
+def delete_transaction(transaction_id):
+    for transaction in transactions:
+            if(transaction["id"] == transaction_id):
+                transactions.remove(transaction)
+                return redirect(for_url("get_transactions"))
+    return {"message": "Transaction not found", 404}
+
 
 # Run the Flask app
+if __name__ == "__main__":
+    app.run(debug=True)
     
